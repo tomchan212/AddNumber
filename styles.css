@@ -1,0 +1,224 @@
+/* ============================================
+   Contact collector – mobile-first styles
+   Change variables and selectors to customize.
+   ============================================ */
+
+:root {
+  --color-bg: #f5f5f5;
+  --color-surface: #fff;
+  --color-primary: #2563eb;
+  --color-primary-tap: #1d4ed8;
+  --color-secondary: #64748b;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-list-item: #f8fafc;
+  --radius: 12px;
+  --touch-min: 48px;
+  --space: 16px;
+  --font-sans: system-ui, -apple-system, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space);
+}
+
+.header {
+  padding: var(--space) 0;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+}
+
+/* ----- Inputs ----- */
+.inputs {
+  background: var(--color-surface);
+  padding: var(--space);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.inputs label {
+  display: block;
+  margin-top: var(--space);
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.inputs label:first-of-type {
+  margin-top: 0;
+}
+
+.inputs input {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.inputs input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.inputs input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Buttons */
+.btn {
+  min-height: var(--touch-min);
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  margin-top: 10px;
+  width: 100%;
+  background: var(--color-secondary);
+  color: #fff;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background: #475569;
+}
+
+.btn-add {
+  flex: 0 0 auto;
+  width: var(--touch-min);
+  min-width: var(--touch-min);
+  font-size: 1.5rem;
+  line-height: 1;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-add:hover,
+.btn-add:focus {
+  background: var(--color-primary-tap);
+}
+
+.btn-primary {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--color-primary-tap);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space);
+  margin-top: var(--space);
+  align-items: stretch;
+}
+
+/* ----- List ----- */
+.list-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  padding: var(--space);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.list-section h2 {
+  margin: 0 0 var(--space);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  max-height: 50vh;
+  -webkit-overflow-scrolling: touch;
+}
+
+.contact-list:empty::after {
+  content: "No contacts yet. Add Name and Number, then tap +.";
+  display: block;
+  padding: var(--space);
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.contact-list li {
+  padding: 12px var(--space);
+  margin-bottom: 8px;
+  background: var(--color-list-item);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.contact-list li .name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.contact-list li .number {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
