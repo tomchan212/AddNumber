@@ -13,20 +13,62 @@
   const numberInput = document.getElementById('number');
   const addRowBtn = document.getElementById('add-row');
   const exportBtn = document.getElementById('export-add');
+  const resetListBtn = document.getElementById('reset-list');
   const listEl = document.getElementById('contact-list');
+  const editModal = document.getElementById('edit-modal');
+  const editPrefix = document.getElementById('edit-prefix');
+  const editName = document.getElementById('edit-name');
+  const editNumber = document.getElementById('edit-number');
+  const editSaveBtn = document.getElementById('edit-save');
+  const editCancelBtn = document.getElementById('edit-cancel');
+  const editDeleteBtn = document.getElementById('edit-delete');
+  const modalOverlay = editModal && editModal.querySelector('.modal-overlay');
 
   /** In-memory only; never persisted for confidentiality. */
   let contacts = [];
 
+  /** Index of contact being edited, or null when adding new. */
+  let editingIndex = null;
+
   /** Stored format: prefix+name and number, e.g. "HHBUPeter 22233322". */
   function renderList() {
     listEl.innerHTML = '';
-    contacts.forEach(function (c) {
+    contacts.forEach(function (c, index) {
       const li = document.createElement('li');
-      li.innerHTML =
+      li.className = 'contact-item';
+      const text = document.createElement('span');
+      text.className = 'contact-item-text';
+      text.innerHTML =
         '[<span class="prefix">' + escapeHtml(c.prefix) + '</span>] + ' +
         '[<span class="name">' + escapeHtml(c.name) + '</span>] + ' +
         '[<span class="number">' + escapeHtml(c.number) + '</span>]';
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'btn-edit';
+      editBtn.textContent = '編輯';
+      editBtn.addEventListener('click', function () {
+        editingIndex = index;
+        editPrefix.value = c.prefix || '';
+        editName.value = c.name || '';
+        editNumber.value = c.number || '';
+        editModal.classList.add('is-open');
+        editModal.setAttribute('aria-hidden', 'false');
+        editPrefix.focus();
+      });
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'btn-delete-inline';
+      deleteBtn.textContent = '刪除';
+      deleteBtn.addEventListener('click', function () {
+        contacts.splice(index, 1);
+        renderList();
+      });
+      const btnGroup = document.createElement('span');
+      btnGroup.className = 'contact-item-btns';
+      btnGroup.appendChild(editBtn);
+      btnGroup.appendChild(deleteBtn);
+      li.appendChild(text);
+      li.appendChild(btnGroup);
       listEl.appendChild(li);
     });
   }
@@ -110,6 +152,12 @@
     }
   });
 
+  function closeEditModal() {
+    editModal.classList.remove('is-open');
+    editModal.setAttribute('aria-hidden', 'true');
+    editingIndex = null;
+  }
+
   addRowBtn.addEventListener('click', function () {
     var prefix = (prefixInput.value || '').trim();
     var name = (nameInput.value || '').trim();
@@ -123,13 +171,49 @@
     prefixInput.focus();
   });
 
+  editSaveBtn.addEventListener('click', function () {
+    var prefix = (editPrefix.value || '').trim();
+    var name = (editName.value || '').trim();
+    var number = (editNumber.value || '').trim();
+    if (editingIndex !== null) {
+      contacts[editingIndex] = { prefix: prefix, name: name, number: number };
+      renderList();
+    }
+    closeEditModal();
+  });
+
+  editDeleteBtn.addEventListener('click', function () {
+    if (editingIndex !== null) {
+      contacts.splice(editingIndex, 1);
+      renderList();
+    }
+    closeEditModal();
+  });
+
+  editCancelBtn.addEventListener('click', closeEditModal);
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', closeEditModal);
+  }
+
+  editModal.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeEditModal();
+  });
+
   exportBtn.addEventListener('click', function () {
+    editingIndex = null;
     exportContacts(contacts, function (exported) {
       if (exported && contacts.length > 0) {
         contacts = [];
         renderList();
       }
     });
+  });
+
+  resetListBtn.addEventListener('click', function () {
+    contacts = [];
+    editingIndex = null;
+    closeEditModal();
+    renderList();
   });
 
   renderList();

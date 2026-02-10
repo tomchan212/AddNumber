@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Add Contacts</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,7 +18,7 @@
         <input
           id="prefix"
           type="text"
-          placeholder="e.g. HHBU"
+          placeholder="e.g. 義工"
           autocomplete="off"
           autofocus
         >
@@ -41,16 +41,37 @@
         >
 
         <div class="actions">
+          <button type="button" id="export-add" class="btn btn-primary">下載Contact檔案</button>
           <button type="button" id="add-row" class="btn btn-add" title="Add to list">+</button>
-          <button type="button" id="export-add" class="btn btn-primary">Add</button>
         </div>
       </section>
 
       <section class="list-section">
-        <h2>List</h2>
+        <div class="list-section-header">
+          <h2>加入名單</h2>
+          <button type="button" id="reset-list" class="btn btn-reset">重置</button>
+        </div>
         <ul id="contact-list" class="contact-list" aria-label="Contacts to export"></ul>
       </section>
     </main>
+  </div>
+
+  <div id="edit-modal" class="modal" aria-hidden="true">
+    <div class="modal-overlay"></div>
+    <div class="modal-card">
+      <h3 class="modal-title">編輯</h3>
+      <label for="edit-prefix">Prefix</label>
+      <input id="edit-prefix" type="text" placeholder="e.g. 義工" autocomplete="off">
+      <label for="edit-name">Name</label>
+      <input id="edit-name" type="text" placeholder="Contact name" autocomplete="name">
+      <label for="edit-number">Number</label>
+      <input id="edit-number" type="tel" placeholder="Phone number" inputmode="numeric" autocomplete="tel">
+      <div class="modal-actions">
+        <button type="button" id="edit-delete" class="btn btn-delete">刪除</button>
+        <button type="button" id="edit-cancel" class="btn btn-secondary">取消</button>
+        <button type="button" id="edit-save" class="btn btn-primary">儲存</button>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
