@@ -15,7 +15,10 @@
 
     <main class="main">
       <section class="inputs">
-        <label for="prefix">Prefix</label>
+        <div class="prefix-row">
+          <label for="prefix">Prefix</label>
+          <button type="button" id="prefix-lock" class="btn btn-lock" title="鎖定後按 + 不會清空 Prefix">鎖定</button>
+        </div>
         <input
           id="prefix"
           type="text"

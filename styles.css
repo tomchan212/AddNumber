@@ -112,6 +112,19 @@ body {
   align-self: flex-start;
 }
 
+.prefix-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.prefix-row label {
+  margin: 0;
+}
+
 .inputs label {
   display: block;
   margin-top: var(--space);
@@ -123,6 +136,35 @@ body {
 
 .inputs label:first-of-type {
   margin-top: 0;
+}
+
+.btn-lock {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-lock:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-lock.is-locked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.btn-lock.is-locked:hover {
+  background: var(--color-primary-tap);
+  border-color: var(--color-primary-tap);
+  color: #fff;
 }
 
 .inputs input {

@@ -14,6 +14,7 @@
   const addRowBtn = document.getElementById('add-row');
   const exportBtn = document.getElementById('export-add');
   const resetListBtn = document.getElementById('reset-list');
+  const prefixLockBtn = document.getElementById('prefix-lock');
   const listEl = document.getElementById('contact-list');
   const editModal = document.getElementById('edit-modal');
   const editPrefix = document.getElementById('edit-prefix');
@@ -33,6 +34,9 @@
 
   /** Index of contact being edited, or null when adding new. */
   let editingIndex = null;
+
+  /** When true, Prefix is not cleared after clicking +. */
+  let prefixLocked = false;
 
   /** Table view: prefix, name, number, 操作. */
   function renderList() {
@@ -215,11 +219,19 @@
     numberInput.classList.remove('input-invalid');
     contacts.push({ prefix: prefix, name: name, number: number });
     renderList();
-    prefixInput.value = '';
+    if (!prefixLocked) prefixInput.value = '';
     nameInput.value = '';
     numberInput.value = '';
     prefixInput.focus();
   });
+
+  if (prefixLockBtn) {
+    prefixLockBtn.addEventListener('click', function () {
+      prefixLocked = !prefixLocked;
+      prefixLockBtn.textContent = prefixLocked ? '已鎖定' : '鎖定';
+      prefixLockBtn.classList.toggle('is-locked', prefixLocked);
+    });
+  }
 
   editSaveBtn.addEventListener('click', function () {
     var prefix = (editPrefix.value || '').trim();
