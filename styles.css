@@ -211,6 +211,7 @@ body {
   border: 1px solid var(--color-border);
 }
 
+.contact-list li .prefix,
 .contact-list li .name {
   font-weight: 600;
   font-size: 1rem;
@@ -220,5 +221,4 @@ body {
 .contact-list li .number {
   font-size: 0.9375rem;
   color: var(--color-text-muted);
-  margin-top: 4px;
 }

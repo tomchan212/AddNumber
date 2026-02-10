@@ -1,47 +1,32 @@
 /**
  * Contact collector – logic
+ * No data is stored (no localStorage, no server). Names and numbers exist
+ * only in memory for the current session and are gone when the tab is closed.
  * Extend or replace export logic here (e.g. WebView bridge).
  */
 
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'contactCollectorList';
-
+  const prefixInput = document.getElementById('prefix');
   const nameInput = document.getElementById('name');
   const numberInput = document.getElementById('number');
-  const confirmBtn = document.getElementById('confirm-name');
   const addRowBtn = document.getElementById('add-row');
   const exportBtn = document.getElementById('export-add');
   const listEl = document.getElementById('contact-list');
 
-  let contacts = loadFromStorage();
+  /** In-memory only; never persisted for confidentiality. */
+  let contacts = [];
 
-  function loadFromStorage() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (_) {
-      return [];
-    }
-  }
-
-  function saveToStorage() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
-    } catch (_) {}
-  }
-
+  /** Stored format: prefix+name and number, e.g. "HHBUPeter 22233322". */
   function renderList() {
     listEl.innerHTML = '';
     contacts.forEach(function (c) {
       const li = document.createElement('li');
       li.innerHTML =
-        '<span class="name">' +
-        escapeHtml(c.name) +
-        '</span><span class="number">' +
-        escapeHtml(c.number) +
-        '</span>';
+        '[<span class="prefix">' + escapeHtml(c.prefix) + '</span>] + ' +
+        '[<span class="name">' + escapeHtml(c.name) + '</span>] + ' +
+        '[<span class="number">' + escapeHtml(c.number) + '</span>]';
       listEl.appendChild(li);
     });
   }
@@ -52,13 +37,16 @@
     return div.innerHTML;
   }
 
+  /** vCard FN = prefix+name (e.g. HHBUPeter), TEL = number. */
   function buildVCard(contacts) {
     return contacts
       .map(function (c) {
+        const prefix = (c.prefix || '').trim();
         const name = (c.name || '').trim();
         const number = (c.number || '').trim();
-        const fn = name || number || 'Unknown';
-        const n = name ? ';' + name + ';;' : ';;;';
+        const fullName = prefix + name; // stored as e.g. HHBUPeter
+        const fn = fullName || number || 'Unknown';
+        const n = fullName ? ';' + fullName + ';;' : ';;;';
         return (
           'BEGIN:VCARD\r\n' +
           'VERSION:3.0\r\n' +
@@ -101,16 +89,17 @@
     if (typeof done === 'function') done(true);
   }
 
-  function focusToNumber() {
-    numberInput.focus();
-  }
-
-  confirmBtn.addEventListener('click', focusToNumber);
+  prefixInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nameInput.focus();
+    }
+  });
 
   nameInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      focusToNumber();
+      numberInput.focus();
     }
   });
 
@@ -122,22 +111,22 @@
   });
 
   addRowBtn.addEventListener('click', function () {
+    var prefix = (prefixInput.value || '').trim();
     var name = (nameInput.value || '').trim();
     var number = (numberInput.value || '').trim();
-    if (!name && !number) return;
-    contacts.push({ name: name, number: number });
-    saveToStorage();
+    if (!prefix && !name && !number) return;
+    contacts.push({ prefix: prefix, name: name, number: number });
     renderList();
+    prefixInput.value = '';
     nameInput.value = '';
     numberInput.value = '';
-    nameInput.focus();
+    prefixInput.focus();
   });
 
   exportBtn.addEventListener('click', function () {
     exportContacts(contacts, function (exported) {
       if (exported && contacts.length > 0) {
         contacts = [];
-        saveToStorage();
         renderList();
       }
     });
