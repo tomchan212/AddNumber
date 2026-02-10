@@ -23,6 +23,10 @@
   const editCancelBtn = document.getElementById('edit-cancel');
   const editDeleteBtn = document.getElementById('edit-delete');
   const modalOverlay = editModal && editModal.querySelector('.modal-overlay');
+  const helpBtn = document.getElementById('help-btn');
+  const helpModal = document.getElementById('help-modal');
+  const helpCloseBtn = document.getElementById('help-close');
+  const helpOverlay = helpModal && helpModal.querySelector('.modal-overlay');
 
   /** In-memory only; never persisted for confidentiality. */
   let contacts = [];
@@ -30,18 +34,30 @@
   /** Index of contact being edited, or null when adding new. */
   let editingIndex = null;
 
-  /** Stored format: prefix+name and number, e.g. "HHBUPeter 22233322". */
+  /** Table view: prefix, name, number, 操作. */
   function renderList() {
     listEl.innerHTML = '';
+    if (contacts.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 4;
+      td.className = 'contact-list-empty';
+      td.textContent = 'No contacts yet. Enter Prefix, Name and Number, then click +.';
+      tr.appendChild(td);
+      listEl.appendChild(tr);
+      return;
+    }
     contacts.forEach(function (c, index) {
-      const li = document.createElement('li');
-      li.className = 'contact-item';
-      const text = document.createElement('span');
-      text.className = 'contact-item-text';
-      text.innerHTML =
-        '[<span class="prefix">' + escapeHtml(c.prefix) + '</span>] + ' +
-        '[<span class="name">' + escapeHtml(c.name) + '</span>] + ' +
-        '[<span class="number">' + escapeHtml(c.number) + '</span>]';
+      const tr = document.createElement('tr');
+      tr.className = 'contact-row';
+      const tdPrefix = document.createElement('td');
+      tdPrefix.textContent = c.prefix || '';
+      const tdName = document.createElement('td');
+      tdName.textContent = c.name || '';
+      const tdNumber = document.createElement('td');
+      tdNumber.textContent = c.number || '';
+      const tdActions = document.createElement('td');
+      tdActions.className = 'td-actions';
       const editBtn = document.createElement('button');
       editBtn.type = 'button';
       editBtn.className = 'btn-edit';
@@ -63,13 +79,13 @@
         contacts.splice(index, 1);
         renderList();
       });
-      const btnGroup = document.createElement('span');
-      btnGroup.className = 'contact-item-btns';
-      btnGroup.appendChild(editBtn);
-      btnGroup.appendChild(deleteBtn);
-      li.appendChild(text);
-      li.appendChild(btnGroup);
-      listEl.appendChild(li);
+      tdActions.appendChild(editBtn);
+      tdActions.appendChild(deleteBtn);
+      tr.appendChild(tdPrefix);
+      tr.appendChild(tdName);
+      tr.appendChild(tdNumber);
+      tr.appendChild(tdActions);
+      listEl.appendChild(tr);
     });
   }
 
@@ -77,6 +93,16 @@
     const div = document.createElement('div');
     div.textContent = s;
     return div.innerHTML;
+  }
+
+  /** Number must be digits only, optionally with a leading + for country code. */
+  function isValidNumber(value) {
+    if (!value) return true;
+    return /^\+?[0-9]+$/.test(value);
+  }
+
+  function showNumberAlert() {
+    alert('請只輸入數字（Number 欄位僅接受數字，可選開頭 + 號）。\nPlease enter numbers only (optional leading +).');
   }
 
   /** vCard FN = prefix+name (e.g. HHBUPeter), TEL = number. */
@@ -152,6 +178,24 @@
     }
   });
 
+  function updateNumberInputValidity(input, value) {
+    var v = (value !== undefined ? value : input.value || '').trim();
+    input.classList.toggle('input-invalid', v.length > 0 && !isValidNumber(v));
+  }
+
+  numberInput.addEventListener('input', function () {
+    updateNumberInputValidity(numberInput);
+  });
+  numberInput.addEventListener('blur', function () {
+    updateNumberInputValidity(numberInput);
+  });
+  editNumber.addEventListener('input', function () {
+    updateNumberInputValidity(editNumber);
+  });
+  editNumber.addEventListener('blur', function () {
+    updateNumberInputValidity(editNumber);
+  });
+
   function closeEditModal() {
     editModal.classList.remove('is-open');
     editModal.setAttribute('aria-hidden', 'true');
@@ -163,6 +207,12 @@
     var name = (nameInput.value || '').trim();
     var number = (numberInput.value || '').trim();
     if (!prefix && !name && !number) return;
+    if (!isValidNumber(number)) {
+      showNumberAlert();
+      numberInput.focus();
+      return;
+    }
+    numberInput.classList.remove('input-invalid');
     contacts.push({ prefix: prefix, name: name, number: number });
     renderList();
     prefixInput.value = '';
@@ -175,7 +225,13 @@
     var prefix = (editPrefix.value || '').trim();
     var name = (editName.value || '').trim();
     var number = (editNumber.value || '').trim();
+    if (!isValidNumber(number)) {
+      showNumberAlert();
+      editNumber.focus();
+      return;
+    }
     if (editingIndex !== null) {
+      editNumber.classList.remove('input-invalid');
       contacts[editingIndex] = { prefix: prefix, name: name, number: number };
       renderList();
     }
@@ -215,6 +271,33 @@
     closeEditModal();
     renderList();
   });
+
+  if (helpBtn && helpModal) {
+    helpBtn.addEventListener('click', function () {
+      helpModal.classList.add('is-open');
+      helpModal.setAttribute('aria-hidden', 'false');
+    });
+  }
+  if (helpCloseBtn) {
+    helpCloseBtn.addEventListener('click', function () {
+      helpModal.classList.remove('is-open');
+      helpModal.setAttribute('aria-hidden', 'true');
+    });
+  }
+  if (helpOverlay) {
+    helpOverlay.addEventListener('click', function () {
+      helpModal.classList.remove('is-open');
+      helpModal.setAttribute('aria-hidden', 'true');
+    });
+  }
+  if (helpModal) {
+    helpModal.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        helpModal.classList.remove('is-open');
+        helpModal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
 
   renderList();
 })();

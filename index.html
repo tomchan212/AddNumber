@@ -10,6 +10,7 @@
   <div class="app">
     <header class="header">
       <h1>Add Contacts</h1>
+      <button type="button" id="help-btn" class="btn btn-help">說明</button>
     </header>
 
     <main class="main">
@@ -41,17 +42,32 @@
         >
 
         <div class="actions">
-          <button type="button" id="export-add" class="btn btn-primary">下載Contact檔案</button>
           <button type="button" id="add-row" class="btn btn-add" title="Add to list">+</button>
         </div>
       </section>
 
       <section class="list-section">
         <div class="list-section-header">
-          <h2>加入名單</h2>
+          <div class="list-section-title-row">
+            <h2>加入名單</h2>
+            <button type="button" id="export-add" class="btn btn-download">下載Contact檔案</button>
+          </div>
           <button type="button" id="reset-list" class="btn btn-reset">重置</button>
         </div>
-        <ul id="contact-list" class="contact-list" aria-label="Contacts to export"></ul>
+        <div class="list-section-line"></div>
+        <div class="contact-list-wrapper">
+          <table class="contact-table">
+            <thead>
+              <tr>
+                <th>Prefix</th>
+                <th>Name</th>
+                <th>Number</th>
+                <th class="th-actions">操作</th>
+              </tr>
+            </thead>
+            <tbody id="contact-list" aria-label="Contacts to export"></tbody>
+          </table>
+        </div>
       </section>
     </main>
   </div>
@@ -70,6 +86,51 @@
         <button type="button" id="edit-delete" class="btn btn-delete">刪除</button>
         <button type="button" id="edit-cancel" class="btn btn-secondary">取消</button>
         <button type="button" id="edit-save" class="btn btn-primary">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="help-modal" class="modal" aria-hidden="true">
+    <div class="modal-overlay"></div>
+    <div class="modal-card help-modal-card">
+      <h3 class="modal-title">網站說明（一步一步教你用）</h3>
+      <div class="help-content">
+        <p><span class="help-q">這個網站是做什麼的？</span><br>
+        這個網站可以幫你「記下很多人的名字和電話」，然後變成一個檔案，讓你下載到手機裡，電話就會自動存進手機的聯絡人。</p>
+
+        <p><span class="help-q">左邊三個空格是什麼？</span></p>
+        <ul>
+          <li><span class="help-field">Prefix（前綴）：</span> 例如這個人是「義工」或「公司」，你打一個短短的標籤。</li>
+          <li><span class="help-field">Name（名字）：</span> 打這個人的名字，例如「小明」。</li>
+          <li><span class="help-field">Number（號碼）：</span> 打這個人的電話號碼。<span class="help-warn">只能打數字</span>，不能打英文字或符號（可以打一個 + 在最前面，例如 +852）。</li>
+        </ul>
+
+        <p><span class="help-q">按「+」按鈕會怎樣？</span><br>
+        你填好上面三個空格之後，按一下左邊那個大大的<span class="help-btn">「+」</span>按鈕，這一筆「前綴 + 名字 + 號碼」就會被加進右邊的<span class="help-field">「加入名單」</span>表格裡。加完之後，左邊三個空格會清空，你可以繼續打下一筆。</p>
+
+        <p><span class="help-q">右邊「加入名單」是什麼？</span><br>
+        就是你把所有要存起來的聯絡人列成一張表。表裡每一行是一個人，有：<span class="help-field">Prefix</span>、<span class="help-field">Name</span>、<span class="help-field">Number</span>，還有兩個按鈕。</p>
+
+        <p><span class="help-q">「編輯」按鈕是做什麼的？</span><br>
+        如果你發現某一筆打錯了，按那一行的<span class="help-btn">「編輯」</span>，會跳出一個小視窗，裡面可以改那一筆的 <span class="help-field">Prefix</span>、<span class="help-field">Name</span>、<span class="help-field">Number</span>。改好之後按<span class="help-btn">「儲存」</span>就更新了；不想改就按<span class="help-btn">「取消」</span>關掉。</p>
+
+        <p><span class="help-q">「刪除」按鈕是做什麼的？</span><br>
+        如果某一筆你不想要了，按那一行的<span class="help-btn">「刪除」</span>，那一個人就會從名單裡消失。在編輯的小視窗裡也有一個<span class="help-btn">「刪除」</span>按鈕，按下去也會把這一筆從名單移除並關閉視窗。</p>
+
+        <p><span class="help-q">「下載Contact檔案」是什麼？</span><br>
+        當你名單都打好了，按「加入名單」旁邊綠色的<span class="help-btn">「下載Contact檔案」</span>，網站會做一個「聯絡人檔案」給你下載。你用手機或電腦打開這個檔案，就可以把名單裡所有的人一次匯入到手機的聯絡人 App 裡。</p>
+
+        <p><span class="help-q">「重置」按鈕是做什麼的？</span><br>
+        按紅色的<span class="help-btn">「重置」</span>，會把右邊「加入名單」裡的人全部清掉，變成空的。要重新開始打名單時可以用。注意：<span class="help-warn">按下去就全部沒了，不會問你第二次。</span></p>
+
+        <p><span class="help-q">號碼打錯了會怎樣？</span><br>
+        如果你在 <span class="help-field">Number</span> 那格打了不是數字的東西（例如英文字），那個格子會出現紅框提醒你。按<span class="help-btn">「+」</span>或<span class="help-btn">「儲存」</span>時也會跳出一段話，<span class="help-warn">叫你只打數字。</span></p>
+
+        <p><span class="help-q">資料會存在哪裡？</span><br>
+        這個網站<span class="help-warn">不會</span>把你的名單存在網路或電腦裡。只有在你開著這個網頁的時候，名單暫時在畫面裡；關掉分頁或重新整理，名單就會不見。所以下載完檔案之後，記得把檔案存好。</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="help-close" class="btn btn-primary">我知道了</button>
       </div>
     </div>
   </div>
